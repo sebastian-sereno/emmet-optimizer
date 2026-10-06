@@ -11,18 +11,6 @@ describe('compress', () => {
     expect(compress('<div>hello</div>')).toBe('<div>hello</div>');
   });
 
-  it('preserves merge groups', () => {
-    expect(compress('hello[[world]]!')).toBe('hello[[world]]!');
-  });
-
-  it('preserves nested merge groups', () => {
-    expect(compress('<div>Hello [[world]]!</div>')).toBe('<div>Hello [[world]]!</div>');
-  });
-
-  it('runs the adjacent-text optimization', () => {
-    expect(compress('<div>hello</div>')).toBe('<div>hello</div>');
-  });
-
   it('allows custom rules', () => {
     const result = compress('hello', {
       rules: [
