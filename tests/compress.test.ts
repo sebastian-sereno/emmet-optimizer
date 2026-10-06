@@ -30,13 +30,13 @@ describe('compress', () => {
           optimize: (node) => {
             if (!isText(node)) return node;
             const value = node.value.toUpperCase();
-            if (node.value !== value) return node;
+            if (node.value === value) return node;
             return { ...node, value };
           },
         },
       ],
     });
 
-    expect(result).toBe('hello');
+    expect(result).toBe('HELLO');
   });
 });
