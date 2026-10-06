@@ -6,6 +6,16 @@ describe('parser', () => {
     expect(parse('hello')).toEqual({ type: 'text', value: 'hello' });
   });
 
+  it('parses siblings', () => {
+    expect(parse('<span>hello</span><span>world</span>')).toEqual({
+      children: [
+        { children: [{ type: 'text', value: 'hello' }], name: 'span', type: 'element' },
+        { children: [{ type: 'text', value: 'world' }], name: 'span', type: 'element' },
+      ],
+      type: 'sequence',
+    });
+  });
+
   it('parses an element', () => {
     expect(parse('<div>hello</div>')).toEqual({
       children: [{ type: 'text', value: 'hello' }],

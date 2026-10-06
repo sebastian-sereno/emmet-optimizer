@@ -123,22 +123,53 @@ describe('parser checks with custom rules', () => {
     });
   });
 
-  // FAILS
   it('parses wrapped elements inside a merge group', () => {
-    expect(() => parse('[[hello <span>world]]</span>', { rules: [mergeGroupRule] })).toThrow(
-      'Unexpected token "merge-close" at position 4',
+    const result = parse('[[hello <span>world]]test</span>', { rules: [mergeGroupRule] });
+
+    expect(result).toEqual({
+      children: [
+        {
+          children: [
+            { type: 'text', value: 'hello ' },
+            { type: 'text', value: 'world' },
+          ],
+          type: 'merge-group',
+        },
+        {
+          children: [{ type: 'text', value: 'test' }],
+          name: 'span',
+          type: 'element',
+        },
+      ],
+      type: 'sequence',
+    });
+  });
+
+  it('extensive testing for parsing wrapped elements inside a merge group', () => {
+    const result = parse(
+      "[[hello <span>world! <h1>beautiful day</h1> for this ]]test isn't it</span>",
+      { rules: [mergeGroupRule] },
     );
-    // .toEqual({
-    //   children: [
-    //     { type: 'text', value: 'hello ' },
-    //     {
-    //       children: [{ type: 'text', value: 'world' }],
-    //       name: 'span',
-    //       type: 'element',
-    //     },
-    //   ],
-    //   type: 'merge-group',
-    // });
+
+    expect(result).toEqual({
+      children: [
+        {
+          children: [
+            { type: 'text', value: 'hello ' },
+            { type: 'text', value: 'world! ' },
+            { children: [{ type: 'text', value: 'beautiful day' }], name: 'h1', type: 'element' },
+            { type: 'text', value: ' for this ' },
+          ],
+          type: 'merge-group',
+        },
+        {
+          children: [{ type: 'text', value: "test isn't it" }],
+          name: 'span',
+          type: 'element',
+        },
+      ],
+      type: 'sequence',
+    });
   });
 
   it('rejects an unclosed merge group', () => {
@@ -175,6 +206,18 @@ describe('lexer checks with custom rules', () => {
       { type: 'text', value: 'hello' },
       { type: 'merge-open', value: '[[' },
       { type: 'text', value: 'world' },
+      { type: 'merge-close', value: ']]' },
+      { type: 'text', value: '!' },
+      { type: 'close', value: 'div' },
+    ]);
+  });
+
+  it('lexes nested structures and merge group', () => {
+    expect(lex('hello[[world<div>]]!</div>', [mergeGroupRule.lexer!])).toEqual([
+      { type: 'text', value: 'hello' },
+      { type: 'merge-open', value: '[[' },
+      { type: 'text', value: 'world' },
+      { type: 'open', value: 'div' },
       { type: 'merge-close', value: ']]' },
       { type: 'text', value: '!' },
       { type: 'close', value: 'div' },
