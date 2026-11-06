@@ -15,5 +15,14 @@
   "editor.formatOnSave": true,
   "editor.indentSize": "tabSize",
   "editor.tabSize": 2,
-  "files.autoSave": "onFocusChange"
+  "files.autoSave": "onFocusChange",
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.jj": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true
+  },
+  "hide-files.files": []
 }
